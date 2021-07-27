@@ -10,7 +10,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.softllc.tapcart.databinding.FragmentProductDetailBinding
-import com.softllc.tapcart.view.productList.ProductListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -50,8 +49,8 @@ class ProductDetailFragment : Fragment() {
         binding.productDetailOptionsList.adapter = adapter
 
         productDetailViewModel.productOptions.observe(viewLifecycleOwner) {
-            val values = it.map {
-                ProductDetailOptionItem(it.optionId, it.optionName, it.optionValues )
+            val values = it.map { option ->
+                ProductDetailOptionItem(option.optionId, option.optionName, option.optionValues )
             }
             adapter.submitList(values)
         }

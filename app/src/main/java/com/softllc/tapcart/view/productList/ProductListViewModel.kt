@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
 import com.softllc.tapcart.core.Result
-import com.softllc.tapcart.domain.repository.ProductRepository
+import com.softllc.tapcart.domain.usecases.GetAllProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -14,11 +14,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
-    private val productsRepository: ProductRepository) :
+    private val getAllProductsUseCase: GetAllProductsUseCase
+) :
     ViewModel() {
 
     private val _productList = MutableLiveData<List<ProductListItem>>()
-    val productList : LiveData<List<ProductListItem>> = _productList
+    val productList: LiveData<List<ProductListItem>> = _productList
 
     init {
         fetchProductList()
@@ -26,15 +27,16 @@ class ProductListViewModel @Inject constructor(
 
     private fun fetchProductList() {
         viewModelScope.launch {
-            productsRepository.fetchProducts().collect {
-                it?.let {
-                    if ( it.status == Result.Status.SUCCESS) {
-                        _productList.value = it.data?.map {
-                            ProductListItem(it.productId, it.productName)
+            getAllProductsUseCase(GetAllProductsUseCase.Param()) {
+                launch {
+                    it.collect {
+                        if (it.status == Result.Status.SUCCESS) {
+                            _productList.value = it.data?.map {
+                                ProductListItem(it.productId, it.productName)
+                            }
                         }
                     }
                 }
-
             }
         }
     }

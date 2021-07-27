@@ -29,3 +29,4 @@ data class Result<out T>(val status: Status, val data: T?, val error: Error?, va
         return "Result(status=$status, data=$data, error=$error, message=$message)"
     }
 }
+

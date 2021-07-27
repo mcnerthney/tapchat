@@ -3,9 +3,6 @@ package com.softllc.tapcart.view.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.ActionBar
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration

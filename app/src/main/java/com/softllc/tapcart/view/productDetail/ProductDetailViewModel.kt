@@ -9,7 +9,7 @@ import com.softllc.tapcart.core.Result
 import com.softllc.tapcart.domain.model.Product
 import com.softllc.tapcart.domain.model.ProductOption
 import com.softllc.tapcart.domain.model.ProductVariant
-import com.softllc.tapcart.domain.repository.ProductRepository
+import com.softllc.tapcart.domain.usecases.GetProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
-    private val productsRepository: ProductRepository
+    private val getProductUseCase: GetProductUseCase
 ) :
     ViewModel() {
 
@@ -30,34 +30,37 @@ class ProductDetailViewModel @Inject constructor(
     private val _selectedVariant = MutableLiveData<ProductVariant?>()
     val selectedVariant: LiveData<ProductVariant?> = _selectedVariant
 
-    private var product : Product? = null
-    private val selectOptions = HashMap<String,String>()
+    private var product: Product? = null
+    private val selectOptions = HashMap<String, String>()
 
     fun loadProduct(productId: String) {
         viewModelScope.launch {
-            productsRepository.fetchProduct(productId).collect {
-                it?.let {
-                    if (it.status == Result.Status.SUCCESS)
-                        it.data?.let {
-                            product = it
-                            _productName.value = it.productName
-                            _productOptions.value = it.options
-                            setSelectedImage()
-                        }
+            getProductUseCase(GetProductUseCase.Param(productId)) {
+                launch {
+                    it.collect {
+                        if (it.status == Result.Status.SUCCESS)
+                            it.data?.let {
+                                product = it
+                                _productName.value = it.productName
+                                _productOptions.value = it.options
+                                setSelectedVariant()
+                            }
+                    }
                 }
             }
+
         }
     }
 
-    fun selectVariant( name : String, value : String ) {
-        selectOptions.set(name, value)
-        setSelectedImage()
+    fun selectVariant(name: String, value: String) {
+        selectOptions[name] = value
+        setSelectedVariant()
     }
 
-    private fun setSelectedImage() {
+    private fun setSelectedVariant() {
         product?.let { product ->
             product.variants.forEach { variant ->
-                if ( selectOptions == variant.variantOptions ) {
+                if (selectOptions == variant.variantOptions) {
                     _selectedVariant.value = variant
                     return
                 }

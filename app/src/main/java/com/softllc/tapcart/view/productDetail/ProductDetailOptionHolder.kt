@@ -1,6 +1,5 @@
 package com.softllc.tapcart.view.productDetail
 
-import android.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,12 @@ class ProductDetailOptionHolder(private val binding: ItemProductDetailOptionBind
     : RecyclerView.ViewHolder(binding.root)  {
     fun bind(item: ProductDetailOptionItem) {
         val valueAdapter = ArrayAdapter(
-            binding.root.context, R.layout.simple_spinner_item,
+            binding.root.context, android.R.layout.simple_spinner_item,
             item.values
         )
 
-        valueAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        binding.productOption.setAdapter(valueAdapter)
+        valueAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.productOption.adapter = valueAdapter
 
         val selectListener = (object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
