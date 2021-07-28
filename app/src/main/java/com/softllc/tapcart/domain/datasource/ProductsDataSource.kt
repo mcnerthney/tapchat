@@ -24,11 +24,7 @@ class ProductsDataSource(val context: Context) {
             emit(Result.success(products))
         } catch (e: Throwable) {
             emit(
-                Result(
-                    Result.Status.ERROR,
-                    null,
-                    FetchProductsFailure(e)
-                )
+                Result(Result.Status.ERROR, null, FetchProductsFailure(e))
             )
         }
     }

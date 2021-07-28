@@ -7,7 +7,7 @@ import com.softllc.tapcart.domain.model.Product
 import com.softllc.tapcart.domain.model.ProductOption
 import com.softllc.tapcart.domain.model.ProductVariant
 
-object ConvertDBtoModel {
+object ConvertDataToModel {
 
     fun convertProduct(dataProduct: DataProduct) : Product {
         val options = dataProduct.options.map {

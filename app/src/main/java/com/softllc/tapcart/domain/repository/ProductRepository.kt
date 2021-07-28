@@ -5,20 +5,20 @@ import com.softllc.tapcart.core.Result
 import com.softllc.tapcart.domain.datasource.ProductsDataSource
 import com.softllc.tapcart.domain.db.DataProduct
 import com.softllc.tapcart.domain.model.Product
-import com.softllc.tapcart.domain.util.ConvertDBtoModel
+import com.softllc.tapcart.domain.util.ConvertDataToModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(
     private val productsDataSource: ProductsDataSource,
 ) {
-    private var cachedData: Result<List<Product>>? = null
-
     class ProductNotFound: Failure.FeatureFailure()
+
+    private var cachedData: List<Product>? = null
 
     fun fetchProducts(): Flow<Result<List<Product>>> {
         cachedData?.let {
-            return flow { emit(it) }
+            return flow { emit(Result.success(it)) }
         }
         return getDbProducts()
     }
@@ -33,11 +33,7 @@ class ProductRepository @Inject constructor(
                     Result.error(ProductNotFound())
                 }
             } else {
-                Result(
-                    products.status,
-                    null,
-                    products.error
-                )
+                Result.error(products.error)
             }
         }
 
@@ -47,20 +43,20 @@ class ProductRepository @Inject constructor(
             .map { dbProducts ->
                 Result(
                     dbProducts.status,
-                    convertProductList(dbProducts.data?.products),
+                    convertToModel(dbProducts.data?.products),
                     dbProducts.error
                 )
             }
             .onEach {
                 if (it.status == Result.Status.SUCCESS) {
-                    cachedData = it
+                    cachedData = it.data
                 }
             }
 
-    private fun convertProductList(dataProduct: List<DataProduct>?): List<Product>? {
+    private fun convertToModel(dataProduct: List<DataProduct>?): List<Product>? {
         val dbProducts = dataProduct ?: return null
         return dbProducts.map {
-            ConvertDBtoModel.convertProduct(it)
+            ConvertDataToModel.convertProduct(it)
         }
 
     }
