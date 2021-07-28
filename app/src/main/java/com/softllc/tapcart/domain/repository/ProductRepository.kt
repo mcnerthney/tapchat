@@ -1,7 +1,9 @@
 package com.softllc.tapcart.domain.repository
 
+import com.softllc.tapcart.core.Failure
 import com.softllc.tapcart.core.Result
 import com.softllc.tapcart.domain.datasource.ProductsDataSource
+import com.softllc.tapcart.domain.db.DataProduct
 import com.softllc.tapcart.domain.model.Product
 import com.softllc.tapcart.domain.util.ConvertDBtoModel
 import kotlinx.coroutines.flow.*
@@ -12,65 +14,56 @@ class ProductRepository @Inject constructor(
 ) {
     private var cachedData: Result<List<Product>>? = null
 
+    class ProductNotFound: Failure.FeatureFailure()
+
     fun fetchProducts(): Flow<Result<List<Product>>> {
         cachedData?.let {
             return flow { emit(it) }
         }
-        return allProducts
+        return getDbProducts()
     }
 
     fun fetchProduct(id: String): Flow<Result<Product>> =
         fetchProducts().map { products ->
             if (products.status == Result.Status.SUCCESS) {
-                val fetchProducts = products.data
-                val foundProduct = fetchProducts?.find { it.productId == id }
+                val foundProduct = products.data?.find { it.productId == id }
                 if (foundProduct != null) {
                     Result.success(foundProduct)
                 } else {
-                    Result(
-                        Result.Status.ERROR,
-                        null,
-                        null,
-                        "not_found"
-                    )
+                    Result.error(ProductNotFound())
                 }
             } else {
                 Result(
-                    Result.Status.ERROR,
+                    products.status,
                     null,
-                    null,
-                    "error"
+                    products.error
                 )
             }
         }
 
 
-    private val allProducts: Flow<Result<List<Product>>> =
+    private fun getDbProducts() : Flow<Result<List<Product>>> =
         productsDataSource.fetchProducts()
             .map { dbProducts ->
-                if (dbProducts.status == Result.Status.SUCCESS) {
-                    val convertedProducts = mutableListOf<Product>()
-                    val fetchProducts = dbProducts.data
-                    fetchProducts?.let {
-                        it.products.forEach {
-                            convertedProducts.add(ConvertDBtoModel.convertProduct(it))
-                        }
-                    }
-                    Result.success(convertedProducts)
-                } else {
-                    Result(
-                        Result.Status.ERROR,
-                        null,
-                        null,
-                        "error"
-                    )
-                }
+                Result(
+                    dbProducts.status,
+                    convertProductList(dbProducts.data?.products),
+                    dbProducts.error
+                )
             }
             .onEach {
                 if (it.status == Result.Status.SUCCESS) {
                     cachedData = it
                 }
             }
+
+    private fun convertProductList(dataProduct: List<DataProduct>?): List<Product>? {
+        val dbProducts = dataProduct ?: return null
+        return dbProducts.map {
+            ConvertDBtoModel.convertProduct(it)
+        }
+
+    }
 }
 
 

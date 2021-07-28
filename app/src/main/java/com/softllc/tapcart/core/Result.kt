@@ -3,7 +3,7 @@ package com.softllc.tapcart.core
 /**
  * Generic class for holding success response, error response and loading status
  */
-data class Result<out T>(val status: Status, val data: T?, val error: Error?, val message: String?) {
+data class Result<out T>(val status: Status, val data: T?, val error: Failure?) {
 
     enum class Status {
         SUCCESS,
@@ -13,20 +13,29 @@ data class Result<out T>(val status: Status, val data: T?, val error: Error?, va
 
     companion object {
         fun <T> success(data: T?): Result<T> {
-            return Result(Status.SUCCESS, data, null, null)
+            return Result(Status.SUCCESS, data, null)
         }
 
-        fun <T> error(message: String, error: Error?): Result<T> {
-            return Result(Status.ERROR, null, error, message)
+        fun <T> error(error: Failure?): Result<T> {
+            return Result(Status.ERROR, null, error)
         }
 
         fun <T> loading(data: T? = null): Result<T> {
-            return Result(Status.LOADING, data, null, null)
+            return Result(Status.LOADING, data, null)
         }
     }
 
     override fun toString(): String {
-        return "Result(status=$status, data=$data, error=$error, message=$message)"
+        return "Result(status=$status, data=$data, error=$error)"
     }
+}
+
+/**
+ * Base Class for handling errors/failures/exceptions.
+ * Every feature specific failure should extend [FeatureFailure] class.
+ */
+sealed class Failure {
+    /** * Extend this class for feature specific failures.*/
+    abstract class FeatureFailure: Failure()
 }
 
