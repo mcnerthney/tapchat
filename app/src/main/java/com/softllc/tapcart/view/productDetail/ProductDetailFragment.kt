@@ -31,7 +31,6 @@ class ProductDetailFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = productDetailViewModel
         initView()
-
         return binding.root
     }
 
@@ -50,7 +49,7 @@ class ProductDetailFragment : Fragment() {
 
         productDetailViewModel.productOptions.observe(viewLifecycleOwner) {
             val values = it.map { option ->
-                ProductDetailOptionItem(option.optionId, option.optionName, option.optionValues )
+                ProductDetailOptionItem(option.optionId, option.optionName, option.optionValues, productDetailViewModel.selectedOptions[option.optionName] )
             }
             adapter.submitList(values)
         }
@@ -63,5 +62,6 @@ class ProductDetailFragment : Fragment() {
             Timber.d("add product variant to cart ${args.product.productId} ${productDetailViewModel.selectedVariant.value}" )
         }
     }
+
 
 }

@@ -20,6 +20,7 @@ class ProductDetailOptionHolder(private val binding: ItemProductDetailOptionBind
         valueAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.productOption.adapter = valueAdapter
 
+
         val selectListener = (object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -33,7 +34,10 @@ class ProductDetailOptionHolder(private val binding: ItemProductDetailOptionBind
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         })
+
         binding.productOption.onItemSelectedListener = selectListener
+        val index = item.values.indexOf(item.selected)
+        if ( index > -1 ) binding.productOption.setSelection(index)
 
     }
 

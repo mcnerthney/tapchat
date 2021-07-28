@@ -31,15 +31,22 @@ class ProductDetailViewModel @Inject constructor(
     val selectedVariant: LiveData<ProductVariant?> = _selectedVariant
 
     private var product: Product? = null
-    private val selectOptions = HashMap<String, String>()
+    private val _selectOptions = HashMap<String, String>()
+    val selectedOptions : Map<String,String > = _selectOptions
 
-    fun loadProduct(productId: String) {
+    fun loadProduct(productId: String, variantId: String? = null) {
         getProductUseCase(GetProductUseCase.Param(productId)) {
             viewModelScope.launch {
                 it.collect {
                     if (it.status == Result.Status.SUCCESS)
                         it.data?.let {
                             product = it
+                            if ( variantId != null ) {
+                                it.variants.find { variantId == variantId }?.let {
+                                    _selectOptions.clear()
+                                    _selectOptions.putAll(it.variantOptions)
+                                }
+                            }
                             _productName.value = it.productName
                             _productOptions.value = it.options
                             setSelectedVariant()
@@ -50,14 +57,14 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun selectVariant(name: String, value: String) {
-        selectOptions[name] = value
+        _selectOptions[name] = value
         setSelectedVariant()
     }
 
     private fun setSelectedVariant() {
         product?.let { product ->
             product.variants.forEach { variant ->
-                if (selectOptions == variant.variantOptions) {
+                if (selectedOptions == variant.variantOptions) {
                     _selectedVariant.value = variant
                     return
                 }

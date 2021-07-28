@@ -5,6 +5,7 @@ import com.softllc.tapcart.core.Result
 import com.softllc.tapcart.domain.datasource.ProductsDataSource
 import com.softllc.tapcart.domain.db.DataProduct
 import com.softllc.tapcart.domain.model.Product
+import com.softllc.tapcart.domain.model.ProductVariant
 import com.softllc.tapcart.domain.util.ConvertDataToModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -13,6 +14,7 @@ class ProductRepository @Inject constructor(
     private val productsDataSource: ProductsDataSource,
 ) {
     class ProductNotFound: Failure.FeatureFailure()
+    class VariantNotFound: Failure.FeatureFailure()
 
     private var cachedProducts: List<Product>? = null
     fun fetchProducts(): Flow<Result<List<Product>>> = flow {
@@ -41,6 +43,20 @@ class ProductRepository @Inject constructor(
                 }
             } else {
                 Result.error(products.error)
+            }
+        }
+
+    fun fetchProductVariant(productId: String,variantId : String): Flow<Result<ProductVariant>> =
+        fetchProduct(productId).map { product ->
+            if (product.status == Result.Status.SUCCESS) {
+                val foundVariant = product.data?.variants?.find { it.variantId == variantId }
+                if (foundVariant != null) {
+                    Result.success(foundVariant)
+                } else {
+                    Result.error(VariantNotFound())
+                }
+            } else {
+                Result.error(product.error)
             }
         }
 
