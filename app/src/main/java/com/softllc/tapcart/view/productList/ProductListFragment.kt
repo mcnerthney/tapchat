@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.softllc.tapcart.databinding.FragmentProductListBinding
-import com.softllc.tapcart.domain.model.SelectedProduct
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -47,7 +46,6 @@ class ProductListFragment : Fragment() {
 
     private fun onProductsItemClick(item: ProductListItem) {
         Timber.d("clicked $item")
-        val selectedProduct = SelectedProduct(item.id)
-        findNavController().navigate(ProductListFragmentDirections.actionToProductDetail(selectedProduct,item.name))
+        findNavController().navigate(ProductListFragmentDirections.actionToProductDetail(item.name,item.id))
     }
 }

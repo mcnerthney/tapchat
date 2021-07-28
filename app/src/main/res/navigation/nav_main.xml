@@ -27,37 +27,17 @@
         android:name="com.softllc.tapcart.view.productDetail.ProductDetailFragment"
         >
         <argument
-            android:name="product"
-            app:argType="com.softllc.tapcart.domain.model.SelectedProduct" />
-        <argument
             android:name="productName"
             app:argType="string" />
-
+        <argument
+            android:name="productId"
+            app:argType="string"  />
+        <argument
+            android:name="variantId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
 
     </fragment>
 
-    <!--   <fragment
-               android:id="@+id/photo_fragment"
-               android:name="com.softllc.photocache.PhotoFragment"
-               tools:layout="@layout/fragment_photo">
-           <argument
-                   android:name="photoId"
-                   app:argType="string" />
-
-              <action
-                   android:id="@+id/action_photo_fragment_next"
-                   app:enterAnim="@anim/slide_in_right"
-                   app:exitAnim="@anim/slide_out_left"
-                   app:launchSingleTop="true"
-                   app:destination="@+id/photo_fragment"/>
-
-           <action
-                   android:id="@+id/action_photo_fragment_prev"
-                   app:enterAnim="@anim/slide_in_left"
-                   app:exitAnim="@anim/slide_out_right"
-                   app:launchSingleTop="true"
-                   app:destination="@+id/photo_fragment"/>
-
-       </fragment>
-   -->
  </navigation>

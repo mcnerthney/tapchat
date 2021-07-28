@@ -36,7 +36,7 @@ class ProductDetailFragment : Fragment() {
 
     private fun initView() {
 
-        productDetailViewModel.loadProduct(args.product.productId)
+        productDetailViewModel.loadProduct(args.productId, args.variantId)
 
         val adapter = ProductDetailOptionAdapter { item, value ->
             productDetailViewModel.selectVariant(item.name, value)
@@ -59,7 +59,7 @@ class ProductDetailFragment : Fragment() {
         }
 
         binding.productDetailAddToCart.setOnClickListener {
-            Timber.d("add product variant to cart ${args.product.productId} ${productDetailViewModel.selectedVariant.value}" )
+            Timber.d("add product variant to cart ${args.productId} ${productDetailViewModel.selectedVariant.value}" )
         }
     }
 

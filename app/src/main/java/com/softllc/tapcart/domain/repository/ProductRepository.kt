@@ -46,21 +46,6 @@ class ProductRepository @Inject constructor(
             }
         }
 
-    fun fetchProductVariant(productId: String,variantId : String): Flow<Result<ProductVariant>> =
-        fetchProduct(productId).map { product ->
-            if (product.status == Result.Status.SUCCESS) {
-                val foundVariant = product.data?.variants?.find { it.variantId == variantId }
-                if (foundVariant != null) {
-                    Result.success(foundVariant)
-                } else {
-                    Result.error(VariantNotFound())
-                }
-            } else {
-                Result.error(product.error)
-            }
-        }
-
-
     private fun getProductsFromDb() : Flow<Result<List<Product>>> =
         productsDataSource.fetchProducts()
             .map { dbProducts ->
