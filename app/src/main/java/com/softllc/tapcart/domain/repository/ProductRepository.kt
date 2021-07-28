@@ -14,14 +14,21 @@ class ProductRepository @Inject constructor(
 ) {
     class ProductNotFound: Failure.FeatureFailure()
 
-    private var cachedData: List<Product>? = null
-
-    fun fetchProducts(): Flow<Result<List<Product>>> {
-        cachedData?.let {
-            return flow { emit(Result.success(it)) }
+    private var cachedProducts: List<Product>? = null
+    fun fetchProducts(): Flow<Result<List<Product>>> = flow {
+        if ( cachedProducts != null ) {
+            emit(Result.success(cachedProducts))
         }
-        return getDbProducts()
+        else {
+            getProductsFromDb().collect {
+                emit(it)
+                if (it.status == Result.Status.SUCCESS) {
+                    cachedProducts = it.data
+                }
+            }
+        }
     }
+
 
     fun fetchProduct(id: String): Flow<Result<Product>> =
         fetchProducts().map { products ->
@@ -38,7 +45,7 @@ class ProductRepository @Inject constructor(
         }
 
 
-    private fun getDbProducts() : Flow<Result<List<Product>>> =
+    private fun getProductsFromDb() : Flow<Result<List<Product>>> =
         productsDataSource.fetchProducts()
             .map { dbProducts ->
                 Result(
@@ -47,18 +54,12 @@ class ProductRepository @Inject constructor(
                     dbProducts.error
                 )
             }
-            .onEach {
-                if (it.status == Result.Status.SUCCESS) {
-                    cachedData = it.data
-                }
-            }
 
     private fun convertToModel(dataProduct: List<DataProduct>?): List<Product>? {
         val dbProducts = dataProduct ?: return null
         return dbProducts.map {
             ConvertDataToModel.convertProduct(it)
         }
-
     }
 }
 
