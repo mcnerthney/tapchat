@@ -13,9 +13,8 @@ class ProductRepository @Inject constructor(
     private var cachedData: Result<List<Product>>? = null
 
     fun fetchProducts(): Flow<Result<List<Product>>> {
-        val fetchedData = cachedData
-        if (fetchedData != null) {
-            return flow { emit(fetchedData) }
+        cachedData?.let {
+            return flow { emit(it) }
         }
         return allProducts
     }
