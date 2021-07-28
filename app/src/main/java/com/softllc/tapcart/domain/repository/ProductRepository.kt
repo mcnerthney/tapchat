@@ -12,17 +12,19 @@ import javax.inject.Inject
 class ProductRepository @Inject constructor(
     private val productsDataSource: ProductsDataSource,
 ) {
-    private var fetchedData: Result<List<Product>>? = null
+    private var cachedData: Result<List<Product>>? = null
 
-    suspend fun fetchProducts(): Flow<Result<List<Product>>?> {
+    fun fetchProducts(): Flow<Result<List<Product>>> {
         return flow {
             val nullProduct : List<Product>? = null
+            val fetchedData = cachedData
             if (fetchedData == null) {
                 emit(Result.loading())
                 val products = fetchAndConvertProducts()
                 if ( products != null ) {
-                    fetchedData = Result.success(products)
-                    emit(fetchedData)
+                    val resultSuccess = Result.success(products)
+                    emit(resultSuccess)
+                    cachedData = resultSuccess
                 }
                 else {
                     emit(
@@ -35,23 +37,26 @@ class ProductRepository @Inject constructor(
                     )
                 }
             }
-            emit(fetchedData)
+            else {
+                emit(fetchedData)
+            }
         }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
     }
 
 
-    suspend fun fetchProduct(id: String): Flow<Result<Product>?> {
+    fun fetchProduct(id: String): Flow<Result<Product>> {
         return flow {
             var product: Product? = null
+            val fetchedData = cachedData
             if ( fetchedData == null ) {
                 emit(Result.loading())
                 val products = fetchAndConvertProducts()
                 if (products != null) {
-                    fetchedData = Result.success(products)
+                    cachedData = Result.success(products)
                 }
             }
             if (fetchedData?.status == Result.Status.SUCCESS) {
-                val foundProduct = fetchedData?.data?.find {
+                val foundProduct = fetchedData.data?.find {
                     it.productId == id
                 }
                 if (foundProduct == null) {

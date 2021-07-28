@@ -34,21 +34,18 @@ class ProductDetailViewModel @Inject constructor(
     private val selectOptions = HashMap<String, String>()
 
     fun loadProduct(productId: String) {
-        viewModelScope.launch {
-            getProductUseCase(GetProductUseCase.Param(productId)) {
-                launch {
-                    it.collect {
-                        if (it.status == Result.Status.SUCCESS)
-                            it.data?.let {
-                                product = it
-                                _productName.value = it.productName
-                                _productOptions.value = it.options
-                                setSelectedVariant()
-                            }
-                    }
+        getProductUseCase(GetProductUseCase.Param(productId)) {
+            viewModelScope.launch {
+                it.collect {
+                    if (it.status == Result.Status.SUCCESS)
+                        it.data?.let {
+                            product = it
+                            _productName.value = it.productName
+                            _productOptions.value = it.options
+                            setSelectedVariant()
+                        }
                 }
             }
-
         }
     }
 

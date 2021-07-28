@@ -15,14 +15,7 @@ class GetAllProductsUseCase
 )
     : UseCase<Result<List<Product>>, GetAllProductsUseCase.Param>() {
 
-    override fun run(params: Param): Flow<Result<List<Product>>> = flow {
-        productRepository.fetchProducts().collect {
-            it?.let {
-                emit(it)
-            }
-        }
-
-    }
+    override fun run(params: Param): Flow<Result<List<Product>>> = productRepository.fetchProducts()
 
     class Param
 }

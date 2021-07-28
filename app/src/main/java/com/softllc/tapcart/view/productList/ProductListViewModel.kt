@@ -15,8 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val getAllProductsUseCase: GetAllProductsUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _productList = MutableLiveData<List<ProductListItem>>()
     val productList: LiveData<List<ProductListItem>> = _productList
@@ -26,19 +25,16 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun fetchProductList() {
-        viewModelScope.launch {
-            getAllProductsUseCase(GetAllProductsUseCase.Param()) {
-                launch {
-                    it.collect {
-                        if (it.status == Result.Status.SUCCESS) {
-                            _productList.value = it.data?.map {
-                                ProductListItem(it.productId, it.productName)
-                            }
+        getAllProductsUseCase(GetAllProductsUseCase.Param()) {
+            viewModelScope.launch {
+                it.collect {
+                    if (it.status == Result.Status.SUCCESS) {
+                        _productList.value = it.data?.map {
+                            ProductListItem(it.productId, it.productName)
                         }
                     }
                 }
             }
         }
     }
-
 }

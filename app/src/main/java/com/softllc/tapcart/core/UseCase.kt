@@ -10,4 +10,5 @@ abstract class UseCase<out Type, in Params> where Type : Any {
         onResult (run(params))
     }
 
+    class Param
 }
