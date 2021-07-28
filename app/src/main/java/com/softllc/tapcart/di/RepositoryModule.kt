@@ -1,7 +1,7 @@
 package com.softllc.tapcart.di
 
 import android.content.Context
-import com.softllc.tapcart.domain.repository.ProductsDataSource
+import com.softllc.tapcart.domain.datasource.ProductsDataSource
 import com.softllc.tapcart.domain.repository.ProductRepository
 import dagger.Module
 import dagger.Provides
