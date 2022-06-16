@@ -2,6 +2,7 @@ package com.softllc.tapcart.view.productList
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 
 class ProductListAdapter(private val onItemClicked: (item: ProductListItem) -> Unit) : ListAdapter<ProductListItem, ProductListHolder> (ProductListDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductListHolder {
@@ -9,7 +10,12 @@ class ProductListAdapter(private val onItemClicked: (item: ProductListItem) -> U
     }
     override fun onBindViewHolder(holder: ProductListHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, position)
+    }
+
+    override fun onViewDetachedFromWindow(holder: ProductListHolder) {
+        super.onViewDetachedFromWindow(holder)
+        //holder.onViewDetachedFromWindow()
     }
 
 }

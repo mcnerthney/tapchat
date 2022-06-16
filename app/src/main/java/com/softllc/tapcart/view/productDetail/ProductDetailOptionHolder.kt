@@ -41,11 +41,4 @@ class ProductDetailOptionHolder(private val binding: ItemProductDetailOptionBind
 
     }
 
-    companion object {
-        fun from(parent: ViewGroup, onItemSelected: (item: ProductDetailOptionItem, value: String) -> Unit): ProductDetailOptionHolder {
-            val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ItemProductDetailOptionBinding.inflate(layoutInflater, parent, false)
-            return ProductDetailOptionHolder(binding, onItemSelected)
-        }
-    }
 }

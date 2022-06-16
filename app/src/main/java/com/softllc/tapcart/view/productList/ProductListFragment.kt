@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.softllc.tapcart.databinding.FragmentProductListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -39,6 +40,9 @@ class ProductListFragment : Fragment() {
         }
         binding.productsList.layoutManager = LinearLayoutManager(context)
         binding.productsList.adapter = adapter
+        binding.productsList.setViewCacheExtension(CustomBlockCacheExtension())
+        //binding.productsList.recycledViewPool.setMaxRecycledViews(0, 500);
+        //binding.productsList.setItemViewCacheSize(300)
         productsViewModel.productList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
@@ -48,4 +52,22 @@ class ProductListFragment : Fragment() {
         Timber.d("clicked $item")
         findNavController().navigate(ProductListFragmentDirections.actionToProductDetail(item.name,item.id))
     }
+}
+
+
+class CustomBlockCacheExtension : RecyclerView.ViewCacheExtension() {
+    override fun getViewForPositionAndType(
+        recycler: RecyclerView.Recycler,
+        position: Int,
+        type: Int
+    ): View? {
+        Timber.d("getViewForPositionAndType $position ${cache[position].hashCode()}")
+
+        return cache[position]
+    }
+
+    companion object {
+        val cache = HashMap<Int,View>()
+    }
+
 }

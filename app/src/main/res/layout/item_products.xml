@@ -14,20 +14,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/item_products"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="200dp">
 
-    <TextView
-        android:id="@+id/product_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text='@{product.name}'
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.softllc.tapcart.view.productList.CodeBlockWebView
+        android:id="@+id/customBlockWebView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        />
+
+
 
 
 
