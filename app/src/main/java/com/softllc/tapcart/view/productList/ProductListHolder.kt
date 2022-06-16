@@ -19,11 +19,11 @@ class ProductListHolder(
         Timber.d("bind $position")
         Timber.d("ViewHolder ${this.toString()}")
         if (CustomBlockCacheExtension.cache[position] == null) {
-            binding.customBlockWebView.loadUrl("https://mcnerthney.github.io/1?pos=$position")
+            binding.customBlockWebView.loadUrl("https://custom-blocks.tapcart.xyz/qCG5aYHAI4/mobile-test-4/index.html")
             binding.itemProducts.setOnClickListener {
                 onItemClicked.invoke(item)
             }
-            //CustomBlockCacheExtension.cache[position] = binding.root
+            CustomBlockCacheExtension.cache[position] = binding.root
         }
     }
 
